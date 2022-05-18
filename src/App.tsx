@@ -3,7 +3,7 @@ import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 
 import "./App.css";
 import "leaflet/dist/leaflet.css";
-import {Icon, LatLngExpression} from "leaflet";
+import { Icon, LatLngExpression } from "leaflet";
 import marker from "./assets/marker-icon.png";
 
 interface Stop {
@@ -92,17 +92,19 @@ const AIRLINES: Airline[] = [
 
 const MAP_CENTER: LatLngExpression = [56.20771, 15.45526];
 const MAP_ZOOM = 11;
+const MAP_ZOOM_MARKEDSTOP = 14;
 
 const ICON = new Icon({
   iconUrl: marker,
   iconSize: [25, 41],
-  iconAnchor: [20, 30]
+  iconAnchor: [20, 30],
 });
 
 function App() {
   const [airline, setAirline] = useState<Airline | undefined>(AIRLINES[0]);
   const [departure, setDeparture] = useState("");
   const [departureOk, setDepartureOk] = useState(false);
+  const [markedStop, setMarkedStop] = useState<Stop | undefined>();
 
   const getStopTime = (before: number) => {
     const timeParts = departure.split(":");
@@ -115,6 +117,22 @@ function App() {
       .toString()
       .padStart(2, "0")}`;
   };
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const paramAirline = params.get("airline");
+    const paramDeparture = params.get("departure");
+    const paramStop = params.get("stop");
+
+    const selectedAirline = AIRLINES.find((airline) => airline.name === paramAirline);
+
+    if (paramAirline) {
+      setAirline(selectedAirline);
+    }
+
+    setDeparture(paramDeparture || "");
+    setMarkedStop(selectedAirline?.stops.find(stop => stop.name === paramStop) || undefined);
+  }, []);
 
   useEffect(() => {
     setDepartureOk(/^\d{1,2}:\d{2}$/gm.test(departure));
@@ -179,13 +197,33 @@ function App() {
                       <tr>
                         <th>Hållplats</th>
                         <th>Klockslag</th>
+                        <th></th>
                       </tr>
                     </thead>
                     <tbody>
                       {airline.stops.map((stop) => (
-                        <tr key={stop.name}>
+                        <tr
+                          key={stop.name}
+                          className={
+                            stop.name === markedStop?.name ? "table-primary" : ""
+                          }
+                        >
                           <td>{stop.name}</td>
                           <td>{getStopTime(stop.before)}</td>
+                          <td>
+                            <a
+                              type="button"
+                              className="btn btn-sm btn-text"
+                              title="Permalink"
+                              href={`https://eclaesson.github.io/flygbuss-kalkylator/?airline=${encodeURIComponent(
+                                airline?.name
+                              )}&departure=${encodeURIComponent(
+                                departure
+                              )}&stop=${encodeURIComponent(stop.name)}`}
+                            >
+                              <i className="fas fa-link"></i>
+                            </a>
+                          </td>
                         </tr>
                       ))}
                     </tbody>
@@ -195,8 +233,8 @@ function App() {
               <div className="col-12">
                 <div className="alert alert-primary p-2">
                   <MapContainer
-                    center={MAP_CENTER}
-                    zoom={MAP_ZOOM}
+                    center={markedStop?.coord || MAP_CENTER}
+                    zoom={!!markedStop ? MAP_ZOOM_MARKEDSTOP : MAP_ZOOM}
                     className="map-container"
                   >
                     <TileLayer
