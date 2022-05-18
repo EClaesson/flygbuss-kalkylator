@@ -3,7 +3,8 @@ import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 
 import "./App.css";
 import "leaflet/dist/leaflet.css";
-import { LatLngExpression } from "leaflet";
+import {Icon, LatLngExpression} from "leaflet";
+import marker from "./assets/marker-icon.png";
 
 interface Stop {
   name: string;
@@ -91,6 +92,12 @@ const AIRLINES: Airline[] = [
 
 const MAP_CENTER: LatLngExpression = [56.20771, 15.45526];
 const MAP_ZOOM = 11;
+
+const ICON = new Icon({
+  iconUrl: marker,
+  iconSize: [25, 41],
+  iconAnchor: [0, 30]
+});
 
 function App() {
   const [airline, setAirline] = useState<Airline | undefined>(AIRLINES[0]);
@@ -197,7 +204,7 @@ function App() {
                       url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     />
                     {airline.stops.map((stop) => (
-                      <Marker position={stop.coord} key={stop.name}>
+                      <Marker position={stop.coord} key={stop.name} icon={ICON}>
                         <Popup>
                           {stop.name}
                           <br />
