@@ -150,8 +150,21 @@ function App() {
               />
             </div>
           </div>
-          {!!airline && departureOk && (
+          {!!airline && (
             <div className="row mt-3">
+              <div className="col-12">
+                <div className="alert alert-primary p-2">
+                  Flygbuss för {airline.name}:s avgångar körs av{" "}
+                  <a href={airline.companyUrl} target="_blank">
+                    {airline.company}
+                  </a>
+                  .
+                </div>
+              </div>
+            </div>
+          )}
+          {!!airline && departureOk && (
+            <div className="row">
               <div className="col-12">
                 <div className="alert alert-primary p-2">
                   <table className="table table-sm table-striped table-hover">
@@ -183,16 +196,15 @@ function App() {
                       attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                       url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     />
-                    {airline.stops.map(stop => (
-                        <Marker position={stop.coord} key={stop.name}>
-                          <Popup>
-                            {stop.name}
-                            <br />
-                            {getStopTime(stop.before)}
-                          </Popup>
-                        </Marker>
+                    {airline.stops.map((stop) => (
+                      <Marker position={stop.coord} key={stop.name}>
+                        <Popup>
+                          {stop.name}
+                          <br />
+                          {getStopTime(stop.before)}
+                        </Popup>
+                      </Marker>
                     ))}
-
                   </MapContainer>
                 </div>
               </div>
