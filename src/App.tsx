@@ -243,7 +243,7 @@ function App() {
                     />
                     {airline.stops.map((stop) => (
                       <Marker position={stop.coord} key={stop.name} icon={ICON}>
-                        <Popup>
+                        <Popup offset={[-7, -8]}>
                           {stop.name}
                           <br />
                           {getStopTime(stop.before)}
