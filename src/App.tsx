@@ -96,7 +96,7 @@ const MAP_ZOOM = 11;
 const ICON = new Icon({
   iconUrl: marker,
   iconSize: [25, 41],
-  iconAnchor: [0, 30]
+  iconAnchor: [20, 30]
 });
 
 function App() {
