@@ -17,3 +17,7 @@
 body {
     background-image: linear-gradient(90deg, #1d647b, #43467d, #a6225d) !important;
 }
+
+.alert {
+    background-image: linear-gradient(125deg, rgba(202, 201, 201, 0.3), rgba(189, 189, 189, 0.2) 70%) !important;
+}
