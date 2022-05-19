@@ -166,9 +166,14 @@ function App() {
     const db = getDatabase(firebaseApp);
     const flightsRef = ref(db, `/flights/${date}/${airline.name}`);
     onValue(flightsRef, (snapshot) => {
-      const data = snapshot.val().sort((a: Flight, b: Flight) => a.departure > b.departure ? 1 : -1);
-      setFlights(data);
-      setSelectedFlight(data[0].id);
+      if(snapshot.exists()) {
+        const data = snapshot.val().sort((a: Flight, b: Flight) => a.departure > b.departure ? 1 : -1);
+        setFlights(data);
+        setSelectedFlight(data[0].id);
+      } else {
+        setFlights([]);
+        setSelectedFlight("");
+      }
     });
   };
 
@@ -258,6 +263,9 @@ function App() {
                       {formatUTCDate(flight.departure)} - {flight.id} - {flight.destination}
                     </option>
                 ))}
+                {!flights?.length && (
+                    <option>Inga flights detta datum</option>
+                )}
               </select>
             </div>
           </div>
