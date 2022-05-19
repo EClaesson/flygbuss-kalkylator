@@ -5,6 +5,7 @@ import "./App.css";
 import "leaflet/dist/leaflet.css";
 import { Icon, LatLngExpression } from "leaflet";
 import marker from "./assets/marker-icon.png";
+import markerSelected from "./assets/marker-icon-selected.png";
 
 interface Stop {
   name: string;
@@ -98,6 +99,12 @@ const ICON = new Icon({
   iconUrl: marker,
   iconSize: [25, 41],
   iconAnchor: [20, 30],
+});
+
+const MARKED_ICON = new Icon({
+  iconUrl: markerSelected,
+  iconSize: [25 * 1.5, 41 * 1.5],
+  iconAnchor: [20 * 1.5, 30 * 1.5],
 });
 
 function App() {
@@ -277,7 +284,7 @@ function App() {
                       url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     />
                     {airline.stops.map((stop) => (
-                      <Marker position={stop.coord} key={stop.name} icon={ICON}>
+                      <Marker position={stop.coord} key={stop.name} icon={markedStop?.name === stop.name ? MARKED_ICON : ICON}>
                         <Popup offset={[-7, -8]}>
                           {stop.name}
                           <br />
