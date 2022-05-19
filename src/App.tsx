@@ -90,7 +90,7 @@ const AIRLINES: Airline[] = [
   },
 ];
 
-const MAP_CENTER: LatLngExpression = [56.20771, 15.45526];
+const MAP_CENTER: LatLngExpression = [56.18957, 15.58404];
 const MAP_ZOOM = 11;
 const MAP_ZOOM_MARKEDSTOP = 14;
 
