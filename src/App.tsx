@@ -1,11 +1,25 @@
 import React, { useEffect, useState } from "react";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
+import { Icon, LatLngExpression } from "leaflet";
+import { initializeApp } from "firebase/app";
+import { getDatabase, ref, onValue } from "firebase/database";
+
+import marker from "./assets/marker-icon.png";
+import markerSelected from "./assets/marker-icon-selected.png";
 
 import "./App.css";
 import "leaflet/dist/leaflet.css";
-import { Icon, LatLngExpression } from "leaflet";
-import marker from "./assets/marker-icon.png";
-import markerSelected from "./assets/marker-icon-selected.png";
+
+const firebaseApp = initializeApp({
+  apiKey: "AIzaSyCh2J9vNvU6XQiWBpkh-y5ruop8l3ms2Dw",
+  authDomain: "flygbuss-kalkylator.firebaseapp.com",
+  databaseURL:
+    "https://flygbuss-kalkylator-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "flygbuss-kalkylator",
+  storageBucket: "flygbuss-kalkylator.appspot.com",
+  messagingSenderId: "522458080754",
+  appId: "1:522458080754:web:a6f49caa226d7b286cb76b",
+});
 
 interface Stop {
   name: string;
@@ -18,6 +32,12 @@ interface Airline {
   company: string;
   companyUrl: string;
   stops: Stop[];
+}
+
+interface Flight {
+  id: string;
+  destination: string;
+  departure: string;
 }
 
 const AIRLINES: Airline[] = [
@@ -107,28 +127,60 @@ const MARKED_ICON = new Icon({
   iconAnchor: [20 * 1.5, 30 * 1.5],
 });
 
+const DAYS_AHEAD = 8;
+
 function App() {
   const [airline, setAirline] = useState<Airline | undefined>(AIRLINES[0]);
-  const [departure, setDeparture] = useState("");
-  const [departureOk, setDepartureOk] = useState(false);
   const [markedStop, setMarkedStop] = useState<Stop | undefined>();
+  const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
+  const [flights, setFlights] = useState<Flight[]>([]);
+  const [selectedFlight, setSelectedFlight] = useState("");
+
+  const dates = [];
+  const dateCursor = new Date();
+
+  for (let i = 0; i < DAYS_AHEAD; i++) {
+    dates.push(dateCursor.toISOString().split("T")[0]);
+    dateCursor.setDate(dateCursor.getDate() + 1);
+  }
 
   const getStopTime = (before: number) => {
-    const timeParts = departure.split(":");
-    const date = new Date();
-    date.setHours(parseInt(timeParts[0], 10), parseInt(timeParts[1], 10));
+    const departure = flights.find(flight => flight.id === selectedFlight)?.departure;
+
+    if(!departure) {
+      return null;
+    }
+
+    const date = new Date(departure);
     date.setMinutes(date.getMinutes() - before);
 
-    return `${date.getHours().toString().padStart(2, "0")}:${date
-      .getMinutes()
-      .toString()
-      .padStart(2, "0")}`;
+    const formatted = date.toLocaleTimeString("sv-SE");
+    return formatted.substring(0, formatted.lastIndexOf(":"));
   };
+
+  const fetchFlights = () => {
+    if(!airline || !date) {
+      return;
+    }
+
+    const db = getDatabase(firebaseApp);
+    const flightsRef = ref(db, `/flights/${date}/${airline.name}`);
+    onValue(flightsRef, (snapshot) => {
+      const data = snapshot.val().sort((a: Flight, b: Flight) => a.departure > b.departure ? 1 : -1);
+      setFlights(data);
+      setSelectedFlight(data[0].id);
+    });
+  };
+
+  const formatUTCDate = (str: string) => {
+    const formatted = (new Date(str)).toLocaleString("sv-SE");
+    return formatted.substring(0, formatted.lastIndexOf(':'));
+  }
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const paramAirline = params.get("airline");
-    const paramDeparture = params.get("departure");
+    const paramFlight = params.get("flight");
     const paramStop = params.get("stop");
 
     const selectedAirline = AIRLINES.find(
@@ -139,16 +191,18 @@ function App() {
       setAirline(selectedAirline);
     }
 
-    setDeparture(paramDeparture || "");
+    setSelectedFlight(paramFlight || "");
     setMarkedStop(
       selectedAirline?.stops.find((stop) => stop.name === paramStop) ||
         undefined
     );
+
+    fetchFlights();
   }, []);
 
   useEffect(() => {
-    setDepartureOk(/^\d{1,2}:\d{2}$/gm.test(departure));
-  }, [departure]);
+    fetchFlights();
+  }, [airline, date]);
 
   return (
     <div className="container">
@@ -158,10 +212,11 @@ function App() {
         </div>
         <div className="card-body p-2">
           <div className="row">
-            <div className="col-xs-12 col-md-6 form-group">
+            <div className="col-xs-12 col-md-3 form-group">
               <label className="form-label">Flygbolag</label>
               <select
                 className="form-select"
+                value={airline?.name}
                 onChange={(evt) => {
                   setAirline(
                     AIRLINES.find(
@@ -177,42 +232,33 @@ function App() {
                 ))}
               </select>
             </div>
+            <div className="col-xs-12 col-md-3 form-group">
+              <label className="form-label">Datum</label>
+              <select
+                className="form-select"
+                value={date}
+                onChange={(evt) => setDate(evt.target.value)}
+              >
+                {dates.map((flightDate) => (
+                  <option key={flightDate} value={flightDate}>
+                    {flightDate}
+                  </option>
+                ))}
+              </select>
+            </div>
             <div className="col-xs-12 col-md-6 form-group">
-              <label className="form-label">Avgångstid (Flyg)</label>
-              <input
-                type="text"
-                className="form-control"
-                maxLength={5}
-                placeholder="00:00"
-                value={departure}
-                onChange={(evt) => {
-                  const charPatterns = [
-                    /[0-2]/,
-                    /[0-9]/,
-                    /:/,
-                    /[0-5]/,
-                    /[0-9]/,
-                  ];
-
-                  let okStr = "";
-
-                  for (let i = 0; i < evt.target.value.length; i++) {
-                    const char = evt.target.value.charAt(i);
-
-                    if (charPatterns[i].test(char)) {
-                      okStr += char;
-                    } else {
-                      break;
-                    }
-                  }
-
-                  if (okStr.length === 2 && evt.target.value.length > departure.length) {
-                    okStr += ":";
-                  }
-
-                  setDeparture(okStr);
-                }}
-              />
+              <label className="form-label">Flight</label>
+              <select
+                  className="form-select"
+                  value={selectedFlight}
+                  onChange={(evt) => setSelectedFlight(evt.target.value)}
+              >
+                {flights.map((flight) => (
+                    <option key={flight.id} value={flight.id}>
+                      {formatUTCDate(flight.departure)} - {flight.id} - {flight.destination}
+                    </option>
+                ))}
+              </select>
             </div>
           </div>
           {!!airline && (
@@ -228,7 +274,7 @@ function App() {
               </div>
             </div>
           )}
-          {!!airline && departureOk && (
+          {(!!airline && !!date && !!selectedFlight) && (
             <div className="row">
               <div className="col-12">
                 <div className="alert alert-primary p-2">
@@ -259,8 +305,8 @@ function App() {
                               title="Permalink"
                               href={`https://eclaesson.github.io/flygbuss-kalkylator/?airline=${encodeURIComponent(
                                 airline?.name
-                              )}&departure=${encodeURIComponent(
-                                departure
+                              )}&flight=${encodeURIComponent(
+                                selectedFlight
                               )}&stop=${encodeURIComponent(stop.name)}`}
                             >
                               <i className="fas fa-link"></i>
@@ -284,7 +330,13 @@ function App() {
                       url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     />
                     {airline.stops.map((stop) => (
-                      <Marker position={stop.coord} key={stop.name} icon={markedStop?.name === stop.name ? MARKED_ICON : ICON}>
+                      <Marker
+                        position={stop.coord}
+                        key={stop.name}
+                        icon={
+                          markedStop?.name === stop.name ? MARKED_ICON : ICON
+                        }
+                      >
                         <Popup offset={[-7, -8]}>
                           {stop.name}
                           <br />
