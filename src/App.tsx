@@ -124,14 +124,19 @@ function App() {
     const paramDeparture = params.get("departure");
     const paramStop = params.get("stop");
 
-    const selectedAirline = AIRLINES.find((airline) => airline.name === paramAirline);
+    const selectedAirline = AIRLINES.find(
+      (airline) => airline.name === paramAirline
+    );
 
     if (paramAirline) {
       setAirline(selectedAirline);
     }
 
     setDeparture(paramDeparture || "");
-    setMarkedStop(selectedAirline?.stops.find(stop => stop.name === paramStop) || undefined);
+    setMarkedStop(
+      selectedAirline?.stops.find((stop) => stop.name === paramStop) ||
+        undefined
+    );
   }, []);
 
   useEffect(() => {
@@ -168,10 +173,38 @@ function App() {
             <div className="col-xs-12 col-md-6 form-group">
               <label className="form-label">Avgångstid (Flyg)</label>
               <input
-                type="time"
+                type="text"
                 className="form-control"
+                maxLength={5}
+                placeholder="00:00"
                 value={departure}
-                onChange={(evt) => setDeparture(evt.target.value)}
+                onChange={(evt) => {
+                  const charPatterns = [
+                    /[0-2]/,
+                    /[0-9]/,
+                    /:/,
+                    /[0-5]/,
+                    /[0-9]/,
+                  ];
+
+                  let okStr = "";
+
+                  for (let i = 0; i < evt.target.value.length; i++) {
+                    const char = evt.target.value.charAt(i);
+
+                    if (charPatterns[i].test(char)) {
+                      okStr += char;
+                    } else {
+                      break;
+                    }
+                  }
+
+                  if (okStr.length === 2 && evt.target.value.length > departure.length) {
+                    okStr += ":";
+                  }
+
+                  setDeparture(okStr);
+                }}
               />
             </div>
           </div>
@@ -205,7 +238,9 @@ function App() {
                         <tr
                           key={stop.name}
                           className={
-                            stop.name === markedStop?.name ? "table-primary" : ""
+                            stop.name === markedStop?.name
+                              ? "table-primary"
+                              : ""
                           }
                         >
                           <td>{stop.name}</td>
