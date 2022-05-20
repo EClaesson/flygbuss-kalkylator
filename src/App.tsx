@@ -145,9 +145,11 @@ function App() {
   }
 
   const getStopTime = (before: number) => {
-    const departure = flights.find(flight => flight.id === selectedFlight)?.departure;
+    const departure = flights.find(
+      (flight) => flight.id === selectedFlight
+    )?.departure;
 
-    if(!departure) {
+    if (!departure) {
       return null;
     }
 
@@ -159,15 +161,17 @@ function App() {
   };
 
   const fetchFlights = () => {
-    if(!airline || !date) {
+    if (!airline || !date) {
       return;
     }
 
     const db = getDatabase(firebaseApp);
     const flightsRef = ref(db, `/flights/${date}/${airline.name}`);
     onValue(flightsRef, (snapshot) => {
-      if(snapshot.exists()) {
-        const data = snapshot.val().sort((a: Flight, b: Flight) => a.departure > b.departure ? 1 : -1);
+      if (snapshot.exists()) {
+        const data = snapshot
+          .val()
+          .sort((a: Flight, b: Flight) => (a.departure > b.departure ? 1 : -1));
         setFlights(data);
         setSelectedFlight(data[0].id);
       } else {
@@ -178,15 +182,16 @@ function App() {
   };
 
   const formatUTCDate = (str: string) => {
-    const formatted = (new Date(str)).toLocaleString("sv-SE");
-    return formatted.substring(0, formatted.lastIndexOf(':'));
-  }
+    const formatted = new Date(str).toLocaleString("sv-SE");
+    return formatted.substring(0, formatted.lastIndexOf(":"));
+  };
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const paramAirline = params.get("airline");
     const paramFlight = params.get("flight");
     const paramStop = params.get("stop");
+    const paramDate = params.get("date");
 
     const selectedAirline = AIRLINES.find(
       (airline) => airline.name === paramAirline
@@ -194,6 +199,10 @@ function App() {
 
     if (paramAirline) {
       setAirline(selectedAirline);
+    }
+
+    if (paramDate) {
+      setDate(paramDate);
     }
 
     setSelectedFlight(paramFlight || "");
@@ -254,18 +263,17 @@ function App() {
             <div className="col-xs-12 col-md-6 form-group">
               <label className="form-label">Flight</label>
               <select
-                  className="form-select"
-                  value={selectedFlight}
-                  onChange={(evt) => setSelectedFlight(evt.target.value)}
+                className="form-select"
+                value={selectedFlight}
+                onChange={(evt) => setSelectedFlight(evt.target.value)}
               >
                 {flights.map((flight) => (
-                    <option key={flight.id} value={flight.id}>
-                      {formatUTCDate(flight.departure)} - {flight.id} - {flight.destination}
-                    </option>
+                  <option key={flight.id} value={flight.id}>
+                    {formatUTCDate(flight.departure)} - {flight.id} -{" "}
+                    {flight.destination}
+                  </option>
                 ))}
-                {!flights?.length && (
-                    <option>Inga flights detta datum</option>
-                )}
+                {!flights?.length && <option>Inga flights detta datum</option>}
               </select>
             </div>
           </div>
@@ -282,7 +290,7 @@ function App() {
               </div>
             </div>
           )}
-          {(!!airline && !!date && !!selectedFlight) && (
+          {!!airline && !!date && !!selectedFlight && (
             <div className="row">
               <div className="col-12">
                 <div className="alert alert-primary p-2">
@@ -313,6 +321,8 @@ function App() {
                               title="Permalink"
                               href={`https://eclaesson.github.io/flygbuss-kalkylator/?airline=${encodeURIComponent(
                                 airline?.name
+                              )}&date=${encodeURIComponent(
+                                date
                               )}&flight=${encodeURIComponent(
                                 selectedFlight
                               )}&stop=${encodeURIComponent(stop.name)}`}
