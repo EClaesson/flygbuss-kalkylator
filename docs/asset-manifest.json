@@ -1,17 +1,17 @@
 {
   "files": {
     "main.css": "/flygbuss-kalkylator/static/css/main.aeba1b21.css",
-    "main.js": "/flygbuss-kalkylator/static/js/main.cf378380.js",
+    "main.js": "/flygbuss-kalkylator/static/js/main.569086dc.js",
     "static/js/787.0ebc0b47.chunk.js": "/flygbuss-kalkylator/static/js/787.0ebc0b47.chunk.js",
     "static/media/marker-icon-selected.png": "/flygbuss-kalkylator/static/media/marker-icon-selected.cef3d618d5b3dce9f9f1.png",
     "static/media/marker-icon.png": "/flygbuss-kalkylator/static/media/marker-icon.179b7550f870a4e6c3d5.png",
     "index.html": "/flygbuss-kalkylator/index.html",
     "main.aeba1b21.css.map": "/flygbuss-kalkylator/static/css/main.aeba1b21.css.map",
-    "main.cf378380.js.map": "/flygbuss-kalkylator/static/js/main.cf378380.js.map",
+    "main.569086dc.js.map": "/flygbuss-kalkylator/static/js/main.569086dc.js.map",
     "787.0ebc0b47.chunk.js.map": "/flygbuss-kalkylator/static/js/787.0ebc0b47.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.aeba1b21.css",
-    "static/js/main.cf378380.js"
+    "static/js/main.569086dc.js"
   ]
 }

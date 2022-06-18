@@ -25,6 +25,7 @@ interface Stop {
   name: string;
   before: number;
   coord: LatLngExpression;
+  price: number;
 }
 
 interface Airline {
@@ -50,30 +51,33 @@ const AIRLINES: Airline[] = [
         name: "Clarion Collection Hotel",
         before: 90,
         coord: [56.16704, 15.59067],
+        price: 100,
       },
-      { name: "Sparre", before: 88, coord: [56.16018, 15.59148] },
-      { name: "Örlogshamnen", before: 84, coord: [56.1572, 15.58556] },
-      { name: "Amiralitetstorget", before: 83, coord: [56.15915, 15.58491] },
-      { name: "Varvet", before: 82, coord: [56.1593, 15.57979] },
+      { name: "Sparre", before: 88, coord: [56.16018, 15.59148], price: 100, },
+      { name: "Örlogshamnen", before: 84, coord: [56.1572, 15.58556], price: 100, },
+      { name: "Amiralitetstorget", before: 83, coord: [56.15915, 15.58491], price: 100, },
+      { name: "Varvet", before: 82, coord: [56.1593, 15.57979], price: 100, },
       {
         name: "Scandic Karlskrona (Fisktorget)",
         before: 80,
         coord: [56.16185, 15.57996],
+        price: 100,
       },
       {
         name: "Karlskrona Centralstation (Läge B)",
         before: 78,
         coord: [56.16707, 15.58505],
+        price: 100,
       },
-      { name: "Kvarngatan", before: 76, coord: [56.1728, 15.59068] },
-      { name: "Galgamarkstrappan", before: 75, coord: [56.17759, 15.59491] },
-      { name: "Bergåsa Station", before: 73, coord: [56.1829, 15.6016] },
-      { name: "Ankaret (City Gross)", before: 71, coord: [56.19611, 15.61374] },
-      { name: "Ekeberg", before: 70, coord: [56.1988, 15.62012] },
-      { name: "Angöringen", before: 65, coord: [56.20734, 15.64359] },
-      { name: "Nättraby E22", before: 62, coord: [56.2073, 15.52793] },
-      { name: "Listerby E22", before: 55, coord: [56.19971, 15.40212] },
-      { name: "Ronneby Flygplats", before: 40, coord: [56.25439, 15.26728] },
+      { name: "Kvarngatan", before: 76, coord: [56.1728, 15.59068], price: 100, },
+      { name: "Galgamarkstrappan", before: 75, coord: [56.17759, 15.59491], price: 100, },
+      { name: "Bergåsa Station", before: 73, coord: [56.1829, 15.6016], price: 100, },
+      { name: "Ankaret (City Gross)", before: 71, coord: [56.19611, 15.61374], price: 100, },
+      { name: "Ekeberg", before: 70, coord: [56.1988, 15.62012], price: 100, },
+      { name: "Angöringen", before: 65, coord: [56.20734, 15.64359], price: 100, },
+      { name: "Nättraby E22", before: 62, coord: [56.2073, 15.52793], price: 100, },
+      { name: "Listerby E22", before: 55, coord: [56.19971, 15.40212], price: 90, },
+      { name: "Ronneby Flygplats", before: 40, coord: [56.25439, 15.26728], price: 90, },
     ],
   },
   {
@@ -86,27 +90,29 @@ const AIRLINES: Airline[] = [
         name: "Clarion Collection Hotel",
         before: 100,
         coord: [56.16704, 15.59067],
+        price: 100,
       },
-      { name: "Sparre", before: 97, coord: [56.16018, 15.59148] },
-      { name: "Örlogshamnen", before: 93, coord: [56.1572, 15.58556] },
-      { name: "Amiralitetstorget", before: 92, coord: [56.15915, 15.58491] },
-      { name: "Varvet", before: 91, coord: [56.1593, 15.57979] },
-      { name: "Fisktorget (Scandic)", before: 90, coord: [56.16185, 15.57996] },
+      { name: "Sparre", before: 97, coord: [56.16018, 15.59148], price: 100, },
+      { name: "Örlogshamnen", before: 93, coord: [56.1572, 15.58556], price: 100, },
+      { name: "Amiralitetstorget", before: 92, coord: [56.15915, 15.58491],price: 100, },
+      { name: "Varvet", before: 91, coord: [56.1593, 15.57979], price: 100, },
+      { name: "Fisktorget (Scandic)", before: 90, coord: [56.16185, 15.57996], price: 100, },
       {
         name: "Karlskrona Centralstation",
         before: 88,
         coord: [56.16707, 15.58505],
+        price: 100,
       },
-      { name: "Kvarngatan", before: 86, coord: [56.1728, 15.59068] },
-      { name: "Galgamarkstrappan", before: 85, coord: [56.17759, 15.59491] },
-      { name: "Bergåsa Station", before: 83, coord: [56.1829, 15.6016] },
-      { name: "Ankaret", before: 81, coord: [56.19611, 15.61374] },
-      { name: "Ekeberg", before: 80, coord: [56.1988, 15.62012] },
-      { name: "Angöringen", before: 72, coord: [56.20734, 15.64359] },
-      { name: "Nättraby E22", before: 69, coord: [56.2073, 15.52793] },
-      { name: "Hjortahammars Vsk.", before: 66, coord: [56.19788, 15.46852] },
-      { name: "Listerby E22", before: 63, coord: [56.19971, 15.40212] },
-      { name: "Ronneby Airport", before: 45, coord: [56.25439, 15.26728] },
+      { name: "Kvarngatan", before: 86, coord: [56.1728, 15.59068],price: 100, },
+      { name: "Galgamarkstrappan", before: 85, coord: [56.17759, 15.59491], price: 100, },
+      { name: "Bergåsa Station", before: 83, coord: [56.1829, 15.6016], price: 100, },
+      { name: "Ankaret", before: 81, coord: [56.19611, 15.61374] ,price: 100, },
+      { name: "Ekeberg", before: 80, coord: [56.1988, 15.62012], price: 100, },
+      { name: "Angöringen", before: 72, coord: [56.20734, 15.64359], price: 100, },
+      { name: "Nättraby E22", before: 69, coord: [56.2073, 15.52793], price: 90, },
+      { name: "Hjortahammars Vsk.", before: 66, coord: [56.19788, 15.46852], price: 90, },
+      { name: "Listerby E22", before: 63, coord: [56.19971, 15.40212], price: 70, },
+      { name: "Ronneby Airport", before: 45, coord: [56.25439, 15.26728], price: 70, },
     ],
   },
 ];
@@ -228,7 +234,7 @@ function App() {
 
   return (
     <div className="container">
-      <div className="card border-primary mt-2">
+      <div className="card border-primary mt-2 mb-2">
         <div className="card-header">
           <h1 className="mb-1">Flygbuss-kalkylator</h1>
         </div>
@@ -307,6 +313,7 @@ function App() {
                       <tr>
                         <th>Hållplats</th>
                         <th>Klockslag</th>
+                        <th>Pris</th>
                         <th></th>
                       </tr>
                     </thead>
@@ -322,6 +329,7 @@ function App() {
                         >
                           <td>{stop.name}</td>
                           <td>{getStopTime(stop.before)}</td>
+                          <td>{`${stop.price.toFixed(0)} SEK`}</td>
                           <td>
                             <a
                               type="button"
