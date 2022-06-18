@@ -174,6 +174,7 @@ function App() {
           .sort((a: Flight, b: Flight) => (a.departure > b.departure ? 1 : -1));
         setFlights(data);
         setSelectedFlight(data[0].id);
+        handleFlightParam();
       } else {
         setFlights([]);
         setSelectedFlight("");
@@ -186,15 +187,20 @@ function App() {
     return formatted.substring(0, formatted.lastIndexOf(":"));
   };
 
-  useEffect(() => {
+  const handleFlightParam = () => {
+    const params = new URLSearchParams(window.location.search);
+    const paramFlight = params.get("flight");
+    setSelectedFlight(paramFlight || "");
+  }
+
+  const handleParams = () => {
     const params = new URLSearchParams(window.location.search);
     const paramAirline = params.get("airline");
-    const paramFlight = params.get("flight");
     const paramStop = params.get("stop");
     const paramDate = params.get("date");
 
     const selectedAirline = AIRLINES.find(
-      (airline) => airline.name === paramAirline
+        (airline) => airline.name === paramAirline
     );
 
     if (paramAirline) {
@@ -205,12 +211,14 @@ function App() {
       setDate(paramDate);
     }
 
-    setSelectedFlight(paramFlight || "");
     setMarkedStop(
-      selectedAirline?.stops.find((stop) => stop.name === paramStop) ||
+        selectedAirline?.stops.find((stop) => stop.name === paramStop) ||
         undefined
     );
+  }
 
+  useEffect(() => {
+    handleParams();
     fetchFlights();
   }, []);
 
