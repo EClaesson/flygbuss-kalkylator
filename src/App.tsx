@@ -196,7 +196,10 @@ function App() {
   const handleFlightParam = () => {
     const params = new URLSearchParams(window.location.search);
     const paramFlight = params.get("flight");
-    setSelectedFlight(paramFlight || "");
+
+    if(paramFlight) {
+      setSelectedFlight(paramFlight);
+    }
   }
 
   const handleParams = () => {
