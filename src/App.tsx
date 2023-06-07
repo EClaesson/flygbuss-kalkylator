@@ -75,8 +75,8 @@ const AIRLINES: Airline[] = [
       { name: "Ankaret (City Gross)", before: 71, coord: [56.19611, 15.61374], price: 120, },
       { name: "Angöringen", before: 65, coord: [56.20734, 15.64359], price: 120, },
       { name: "Nättraby E22", before: 62, coord: [56.2073, 15.52793], price: 120, },
-      { name: "Listerby E22", before: 55, coord: [56.19971, 15.40212], price: 110, },
-      { name: "Ronneby Flygplats", before: 40, coord: [56.25439, 15.26728], price: 110, },
+      { name: "Listerby E22", before: 55, coord: [56.19971, 15.40212], price: 90, },
+      { name: "Ronneby Flygplats", before: 40, coord: [56.25439, 15.26728], price: 90, },
     ],
   },
   {
@@ -236,6 +236,11 @@ function App() {
 
   return (
     <div className="container">
+      <br />
+      <div className="alert alert-danger">
+        Fr.o.m 30 Juni kommer det inte längre finnas flygbuss tillgänglig för SAS-flyg.<br />
+        Flygbuss för BRA-flyg fortsätter trafikeras som vanligt.
+      </div>
       <div className="card border-primary mt-2 mb-2">
         <div className="card-header">
           <h1 className="mb-1">Flygbuss-kalkylator</h1>
